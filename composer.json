@@ -1,0 +1,24 @@
+{
+    "name": "pragmaphp/filedb",
+    "description": "Flat file DB based on JSON files",
+    "type": "library",
+    "license": "ISC",
+    "authors": [
+        {
+            "name": "Jannis Rondorf",
+            "email": "github@jrondorf.de"
+        }
+    ],
+    "require": {
+        "php": "^7",
+        "pragmaphp/uid": "^1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    },
+    "autoload": {
+        "psr-4": {
+            "PragmaPHP\\FileDB\\": "src/"
+        }
+    }
+}
