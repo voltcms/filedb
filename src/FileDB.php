@@ -65,8 +65,7 @@ class FileDB {
                         foreach ($file as $key => $value) {
                             if ($key == $search_key) {
                                 if (self::startsWith($search_value, '*') && self::endsWith($search_value, '*') && strlen($search_value) > 3) {
-                                    $search_value = substr($search_value, 1, -1);
-                                    if (stripos($value, $search_value) !== false) {
+                                    if (stripos($value, substr($search_value, 1, -1)) !== false) {
                                         $result[] = $file;
                                     }
                                 } else {
