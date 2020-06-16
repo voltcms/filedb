@@ -130,7 +130,8 @@ class FileDB {
         $file = $this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON;
         ksort($data);
         // todo trim array
-        file_put_contents($file, json_encode($data));
+        array_walk_recursive($data,function(&$v){$v=trim($v);});
+        file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
     }
 
     private function readFiles(array $files): array {

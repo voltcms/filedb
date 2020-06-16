@@ -7,20 +7,34 @@ use \PragmaPHP\Uid\Uid;
 class FileDBTest extends TestCase {
 
     public function test() {
+        $delete = true;
+    
         $db = new FileDB('testdata/users');
-        $db->deleteAll();
-        $this->assertEmpty($db->readAll());
+
+        if ($delete) {
+            $db->deleteAll();
+            $this->assertEmpty($db->readAll());
+        }
 
         $test_data = [
             'username' => 'Administrator',
             'password' => 'test'
         ];
         $test_data_update_1 = [
-            'username' => 'Tester'
+            'username' => 'Tester '
         ];
         $test_data_update_2 = [
             'lastname' => 'Last Name',
-            'password' => ''
+            'password' => '',
+            'groups' => [
+                'Administrator',
+                'Everyone'
+            ],
+            'content' => '<div class="test">
+            <h1>Test</h1>
+            <p>Test</p>
+            </div>
+            '
         ];
 
         $id = $db->create($test_data);
@@ -46,17 +60,24 @@ class FileDBTest extends TestCase {
         $this->assertEquals($data[0]['lastname'], 'Last Name');
         $this->assertEmpty($data[0]['password']);
 
+ 
         $data = $db->read(null, [
             'username' => '*est*'
         ]);
-        $this->assertEquals($data[0]['_id'], $id);
-        $this->assertEquals($data[0]['username'], 'Tester');
+        $this->assertNotEmpty($data);
+        if ($delete) {
+            $this->assertEquals($data[0]['_id'], $id);
+            $this->assertEquals($data[0]['username'], 'Tester');
+        }
 
         $data = $db->read(null, [
             'username' => ' Tester '
         ]);
-        $this->assertEquals($data[0]['_id'], $id);
-        $this->assertEquals($data[0]['username'], 'Tester');
+        $this->assertNotEmpty($data);
+        if ($delete) {
+            $this->assertEquals($data[0]['_id'], $id);
+            $this->assertEquals($data[0]['username'], 'Tester');
+        }
 
         $data = $db->read(null, [
             'username' => 'xxx'
@@ -64,18 +85,26 @@ class FileDBTest extends TestCase {
         $this->assertEmpty($data);
 
         $this->assertNotEmpty($db->readAll());
-        $db->delete($id);
-        $this->assertEmpty($db->read($id));
+        if ($delete) {
+            $db->delete($id);
+            $this->assertEmpty($db->read($id));
+        }
 
         $db->create($test_data);
-        $db->create($test_data);
+        $db->create($test_data_update_1);
+        $db->create($test_data_update_2);
         $data = $db->readAll();
         $this->assertNotEmpty($data);
-        $this->assertEquals(count($data), 2);
 
-        $db->deleteAll();
-        $data = $db->readAll();
-        $this->assertEmpty($data);
+        if ($delete) {
+            $this->assertEquals(count($data), 3);
+        }
+
+        if ($delete) {
+            $db->deleteAll();
+            $data = $db->readAll();
+            $this->assertEmpty($data);
+        }
     }
 
 }
