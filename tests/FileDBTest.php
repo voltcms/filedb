@@ -16,7 +16,7 @@ class FileDBTest extends TestCase {
             'password' => 'test'
         ];
         $test_data_update_1 = [
-            'username' => 'Tester'
+            'username' => 'Tester '
         ];
         $test_data_update_2 = [
             'lastname' => 'Last Name',
@@ -47,11 +47,15 @@ class FileDBTest extends TestCase {
         $this->assertEmpty($data[0]['password']);
 
         $data = $db->read(null, [
-            'username' => 'Tester'
+            'username' => '*est*'
         ]);
         $this->assertEquals($data[0]['_id'], $id);
-        $this->assertNotEmpty($data[0]['_created']);
-        $this->assertNotEmpty($data[0]['_modified']);
+        $this->assertEquals($data[0]['username'], 'Tester');
+
+        $data = $db->read(null, [
+            'username' => ' Tester '
+        ]);
+        $this->assertEquals($data[0]['_id'], $id);
         $this->assertEquals($data[0]['username'], 'Tester');
 
         $data = $db->read(null, [

@@ -59,9 +59,22 @@ class FileDB {
             $files = $this->readAll();
             foreach ($files as $file) {
                 foreach ($search_data as $search_key => $search_value) {
-                    foreach ($file as $key => $value) {
-                        if ($key == $search_key && strcasecmp($value, $search_value) === 0) {
-                            $result[] = $file;
+                    $search_value = trim($search_value);
+                    $search_key = trim($search_key);
+                    if (array_key_exists($search_key, $file)) {
+                        foreach ($file as $key => $value) {
+                            if ($key == $search_key) {
+                                if (self::startsWith($search_value, '*') && self::endsWith($search_value, '*') && strlen($search_value) > 3) {
+                                    $search_value = substr($search_value, 1, -1);
+                                    if (stripos($value, $search_value) !== false) {
+                                        $result[] = $file;
+                                    }
+                                } else {
+                                    if (strcasecmp($value, $search_value) === 0) {
+                                        $result[] = $file;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -117,6 +130,7 @@ class FileDB {
     private function writeFile(string $id, array $data) {
         $file = $this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON;
         ksort($data);
+        $data = array_map('trim', $data);
         file_put_contents($file, json_encode($data));
     }
 
@@ -140,6 +154,14 @@ class FileDB {
                 unlink($file);
             }
         }
+    }
+
+    private static function startsWith($haystack, $needle) {
+        return substr_compare($haystack, $needle, 0, strlen($needle)) === 0;
+    }
+
+    private static function endsWith($haystack, $needle) {
+        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
 }
