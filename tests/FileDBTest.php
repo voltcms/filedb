@@ -16,7 +16,7 @@ class FileDBTest extends TestCase {
             'password' => 'test'
         ];
         $test_data_update_1 = [
-            'username' => 'Tester '
+            'username' => 'Tester'
         ];
         $test_data_update_2 = [
             'lastname' => 'Last Name',
