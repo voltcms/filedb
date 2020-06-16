@@ -129,7 +129,8 @@ class FileDB {
     private function writeFile(string $id, array $data) {
         $file = $this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON;
         ksort($data);
-        $data = array_map('trim', $data);
+        // todo
+        // $data = array_map('trim', $data);
         file_put_contents($file, json_encode($data));
     }
 
