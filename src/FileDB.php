@@ -49,14 +49,14 @@ class FileDB {
     * @param    string  Unique ID
     * @param    array   Data
     */
-    public function read(string $id = null, array $search_data = null): array {
+    public function read(string $id = null, array $search_data = null, bool $raw = false): array {
         $result = [];
         if (!empty($id)) {
             $files = [$this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON];
-            return $this->readFiles($files);
+            return $this->readFiles($files, $raw);
         } else if (!empty($search_data)) {
             // TODO performance, multi search array, wildcard search
-            $files = $this->readAll();
+            $files = $this->readAll($raw);
             foreach ($files as $file) {
                 foreach ($search_data as $search_key => $search_value) {
                     $search_value = trim($search_value);
@@ -86,9 +86,9 @@ class FileDB {
     * @param    string  Unique ID
     * @param    array   Data
     */
-    public function readAll(): array {
+    public function readAll(bool $raw = false): array {
         $files = glob($this->directory . DIRECTORY_SEPARATOR . '*' . self::FILE_EXT_JSON);
-        return $this->readFiles($files);
+        return $this->readFiles($files, $raw);
     }
 
     /**
@@ -103,7 +103,7 @@ class FileDB {
         unset($data['_modified']);
         $file = $this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON;
         if(is_file($file)) {
-            $data = array_merge($this->readFile($file), $data);
+            $data = array_merge($this->readFile($file, false), $data);
             $data[self::ATTRIBUTE_MODIFIED] = $modified;
             $this->writeFile($id, $data);
         }
@@ -134,18 +134,23 @@ class FileDB {
         file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
     }
 
-    private function readFiles(array $files): array {
+    private function readFiles(array $files, bool $raw): array {
         $result = [];
         foreach($files as $file) {
             if(is_file($file)) {
-                $result[] = $this->readFile($file);
+                $result[] = $this->readFile($file, $raw);
             }
         }
         return $result;
     }
 
-    private function readFile($file): array {
-        return json_decode(file_get_contents($file), true);
+    private function readFile(string $file, bool $raw) {
+        $data = file_get_contents($file);
+        if ($raw) {
+            return $data;
+        } else {
+            return json_decode($data, true);
+        }
     }
 
     private function deleteFiles(array $files) {
