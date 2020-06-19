@@ -30,40 +30,11 @@ class FileDBTest extends TestCase {
                 'Administrator',
                 'Everyone'
             ],
-            'header' => '<img src="/_cms/media/aaron-lee-WrPmNpKQUUY-unsplash.jpg"/>',
-            'summary' => '<p>
-            Summary
-            <br>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>',
-            'main' => '<p>
-            Main
-            <br>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            <br>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>'
+            'content' => '<div class="test">
+            <h1>Test</h1>
+            <p>Test</p>
+            </div>
+            '
         ];
 
         $id = $db->create($test_data);
@@ -88,12 +59,7 @@ class FileDBTest extends TestCase {
         $this->assertEquals($data[0]['username'], 'Tester');
         $this->assertEquals($data[0]['lastname'], 'Last Name');
         $this->assertEmpty($data[0]['password']);
-        $data = $db->read($id, null, true);
-        $this->assertNotEmpty($data);
-        $this->assertNotEmpty($data[0]);
-        $data = json_decode($data[0], true);
-        $this->assertNotEmpty($data);
-        $this->assertNotEmpty($data['_created']);
+
  
         $data = $db->read(null, [
             'username' => '*est*'
@@ -129,11 +95,7 @@ class FileDBTest extends TestCase {
         $db->create($test_data_update_2);
         $data = $db->readAll();
         $this->assertNotEmpty($data);
-        if ($delete) {
-            $this->assertEquals(count($data), 3);
-        }
-        $data = $db->readAll(true);
-        $this->assertNotEmpty($data);
+
         if ($delete) {
             $this->assertEquals(count($data), 3);
         }
