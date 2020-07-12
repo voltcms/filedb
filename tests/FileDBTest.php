@@ -34,7 +34,8 @@ class FileDBTest extends TestCase {
             <h1>Test</h1>
             <p>Test</p>
             </div>
-            '
+            ',
+            'boolean_value' => false
         ];
 
         $id = $db->create($test_data);
@@ -105,6 +106,24 @@ class FileDBTest extends TestCase {
             $data = $db->readAll();
             $this->assertEmpty($data);
         }
+
+        $id = $db->create($test_data);
+        $db->setReadonly($id, true);
+        $db->update($id, $test_data_update_1);
+        $data = $db->read($id);
+        $this->assertEquals($data[0]['username'], 'Administrator');
+        $this->assertEquals($data[0]['_readonly'], '1');
+        $db->delete($id);
+        $data = $db->read($id);
+        $this->assertNotEmpty($data);
+        $db->setReadonly($id, false);
+        $db->update($id, $test_data_update_1);
+        $data = $db->read($id);
+        $this->assertEquals($data[0]['username'], 'Tester');
+        $this->assertEquals($data[0]['_readonly'], '');
+        $db->delete($id);
+        $data = $db->read($id);
+        $this->assertEmpty($data);
     }
 
 }

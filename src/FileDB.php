@@ -12,6 +12,7 @@ class FileDB {
     const ATTRIBUTE_ID = '_id';
     const ATTRIBUTE_CREATED = '_created';
     const ATTRIBUTE_MODIFIED = '_modified';
+    const ATTRIBUTE_READONLY = '_readonly';
     const FILE_EXT_JSON = '.json';
 
     private $directory;
@@ -39,6 +40,7 @@ class FileDB {
         $time = microtime(true);
         $created = date(DATE_ATOM, round($time));
         $id = Uid::generate(round($time * 1000));
+        $data = self::removePrivateFields($data);
         $data[self::ATTRIBUTE_ID] = $id;
         $data[self::ATTRIBUTE_CREATED] = $created;
         $this->writeFile($id, $data);
@@ -96,16 +98,15 @@ class FileDB {
     * @param    array   Data
     */
     public function update(string $id, array $data): string {
-        $time = microtime(true);
-        $modified = date(DATE_ATOM, round($time));
-        unset($data['_id']);
-        unset($data['_created']);
-        unset($data['_modified']);
         $file = $this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON;
         if(is_file($file)) {
-            $data = array_merge($this->readFile($file), $data);
-            $data[self::ATTRIBUTE_MODIFIED] = $modified;
-            $this->writeFile($id, $data);
+            $file_data = $this->readFile($file);
+            if (!self::isReadonly($file_data)) {
+                $data = self::removePrivateFields($data);
+                $data = array_merge($file_data, $data);
+                $data[self::ATTRIBUTE_MODIFIED] = date(DATE_ATOM, round(microtime(true)));
+                $this->writeFile($id, $data);
+            }
         }
         return $id;
     }
@@ -124,6 +125,21 @@ class FileDB {
     public function deleteAll() {
         $files = glob($this->directory . DIRECTORY_SEPARATOR . '*' . self::FILE_EXT_JSON);
         $this->deleteFiles($files);
+    }
+
+    /**
+    * @param    string  Unique ID
+    * @param    array   Data
+    */
+    public function setReadonly(string $id, bool $readonly): string {
+        $file = $this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON;
+        if(is_file($file)) {
+            $data = $this->readFile($file);
+            $data[self::ATTRIBUTE_READONLY] = $readonly;
+            $data[self::ATTRIBUTE_MODIFIED] = date(DATE_ATOM, round(microtime(true)));
+            $this->writeFile($id, $data);
+        }
+        return $id;
     }
 
     private function writeFile(string $id, array $data) {
@@ -151,7 +167,10 @@ class FileDB {
     private function deleteFiles(array $files) {
         foreach($files as $file) {
             if(is_file($file)) {
-                unlink($file);
+                $original_data = $this->readFile($file);
+                if (!self::isReadonly($original_data)) {
+                    unlink($file);
+                }
             }
         }
     }
@@ -162,6 +181,22 @@ class FileDB {
 
     private static function endsWith($haystack, $needle) {
         return substr_compare($haystack, $needle, -strlen($needle)) === 0;
+    }
+
+    private static function isReadonly($data) {
+        if (array_key_exists('_readonly', $data) && $data['_readonly']) {
+            return true;
+        }
+        return false;
+    }
+
+    private static function removePrivateFields(array $data): array {
+        foreach ($data as $key => $value) {
+            if (strpos($key, '_') === 0) {
+                unset($data[$key]);
+            }
+        }
+        return $data;
     }
 
 }
