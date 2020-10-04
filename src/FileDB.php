@@ -114,7 +114,7 @@ class FileDB {
     /**
     * @param    string  Unique ID
     */
-    public function delete(string $id) {
+    public function delete(string $id): void {
         $files = [$this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON];
         $this->deleteFiles($files);
     }
@@ -122,7 +122,7 @@ class FileDB {
     /**
     * @param    string  Unique ID
     */
-    public function deleteAll() {
+    public function deleteAll(): void {
         $files = glob($this->directory . DIRECTORY_SEPARATOR . '*' . self::FILE_EXT_JSON);
         $this->deleteFiles($files);
     }
@@ -142,7 +142,7 @@ class FileDB {
         return $id;
     }
 
-    private function writeFile(string $id, array $data) {
+    private function writeFile(string $id, array $data): void {
         $file = $this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON;
         ksort($data);
         // todo trim array
@@ -175,15 +175,15 @@ class FileDB {
         }
     }
 
-    private static function startsWith($haystack, $needle) {
+    private static function startsWith($haystack, $needle): bool {
         return substr_compare($haystack, $needle, 0, strlen($needle)) === 0;
     }
 
-    private static function endsWith($haystack, $needle) {
+    private static function endsWith($haystack, $needle): bool {
         return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
-    private static function isReadonly($data) {
+    private static function isReadonly($data): bool {
         if (array_key_exists('_readonly', $data) && $data['_readonly']) {
             return true;
         }
