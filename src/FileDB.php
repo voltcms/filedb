@@ -36,10 +36,12 @@ class FileDB {
     /**
     * @param    array   Data
     */
-    public function create(array $data): string {
+    public function create(array $data, $id = null): string {
         $time = microtime(true);
         $created = date(DATE_ATOM, round($time));
-        $id = Uid::generate(round($time * 1000));
+        if (empty($id)) {
+            $id = Uid::generate(round($time * 1000));
+        }
         $data = self::removePrivateFields($data);
         $data[self::ATTRIBUTE_ID] = $id;
         $data[self::ATTRIBUTE_CREATED] = $created;

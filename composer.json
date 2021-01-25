@@ -20,5 +20,8 @@
         "psr-4": {
             "PragmaPHP\\FileDB\\": "src/"
         }
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
     }
 }

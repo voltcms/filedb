@@ -124,6 +124,15 @@ class FileDBTest extends TestCase {
         $db->delete($id);
         $data = $db->read($id);
         $this->assertEmpty($data);
+
+        $id = $db->create($test_data, 'test_id');
+        $this->assertNotEmpty($id);
+        $this->assertNotEmpty('test_id');
+        $data = $db->read($id);
+        $this->assertNotEmpty($data);
+        $db->delete('test_id');
+        $data = $db->read($id);
+        $this->assertEmpty($data);
     }
 
 }
