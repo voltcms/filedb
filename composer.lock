@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "pragmaphp/uid",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pragmaphp/uid.git",
-                "reference": "389bb0127feeb1b8f134f131d46c467e4f506df9"
+                "reference": "bd05e2cb5895ba5b4b63cc70ff209307c1c70506"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pragmaphp/uid/zipball/389bb0127feeb1b8f134f131d46c467e4f506df9",
-                "reference": "389bb0127feeb1b8f134f131d46c467e4f506df9",
+                "url": "https://api.github.com/repos/pragmaphp/uid/zipball/bd05e2cb5895ba5b4b63cc70ff209307c1c70506",
+                "reference": "bd05e2cb5895ba5b4b63cc70ff209307c1c70506",
                 "shasum": ""
             },
             "require": {
@@ -45,9 +45,9 @@
             "description": "PHP Unique ID generator based on ULID (Universally Unique Lexicographically Sortable Identifier)",
             "support": {
                 "issues": "https://github.com/pragmaphp/uid/issues",
-                "source": "https://github.com/pragmaphp/uid/tree/1.0.2"
+                "source": "https://github.com/pragmaphp/uid/tree/1.1.0"
             },
-            "time": "2020-06-14T19:39:31+00:00"
+            "time": "2021-02-25T09:11:50+00:00"
         }
     ],
     "packages-dev": [
@@ -296,16 +296,16 @@
         },
         {
             "name": "phar-io/version",
-            "version": "3.0.4",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/version.git",
-                "reference": "e4782611070e50613683d2b9a57730e9a3ba5451"
+                "reference": "bae7c545bef187884426f042434e561ab1ddb182"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/version/zipball/e4782611070e50613683d2b9a57730e9a3ba5451",
-                "reference": "e4782611070e50613683d2b9a57730e9a3ba5451",
+                "url": "https://api.github.com/repos/phar-io/version/zipball/bae7c545bef187884426f042434e561ab1ddb182",
+                "reference": "bae7c545bef187884426f042434e561ab1ddb182",
                 "shasum": ""
             },
             "require": {
@@ -341,9 +341,9 @@
             "description": "Library for handling version information and constraints",
             "support": {
                 "issues": "https://github.com/phar-io/version/issues",
-                "source": "https://github.com/phar-io/version/tree/3.0.4"
+                "source": "https://github.com/phar-io/version/tree/3.1.0"
             },
-            "time": "2020-12-13T23:18:30+00:00"
+            "time": "2021-02-23T14:00:09+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -890,16 +890,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.1",
+            "version": "9.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360"
+                "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e7bdf4085de85a825f4424eae52c99a1cec2f360",
-                "reference": "e7bdf4085de85a825f4424eae52c99a1cec2f360",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f661659747f2f87f9e72095bb207bceb0f151cb4",
+                "reference": "f661659747f2f87f9e72095bb207bceb0f151cb4",
                 "shasum": ""
             },
             "require": {
@@ -977,7 +977,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.1"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.2"
             },
             "funding": [
                 {
@@ -989,7 +989,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-01-17T07:42:25+00:00"
+            "time": "2021-02-02T14:45:58+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -1957,7 +1957,7 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.22.0",
+            "version": "v1.22.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
@@ -2016,7 +2016,7 @@
                 "portable"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.22.0"
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.22.1"
             },
             "funding": [
                 {
