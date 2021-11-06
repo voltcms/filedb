@@ -2,7 +2,7 @@
 
 namespace PragmaPHP\FileDB;
 
-use \PragmaPHP\Uid\Uid;
+use \PragmaPHP\Uuid\Uuid;
 
 /**
 * Flat file DB based on JSON files
@@ -40,7 +40,7 @@ class FileDB {
         $time = microtime(true);
         $created = date(DATE_ATOM, round($time));
         if (empty($id)) {
-            $id = Uid::generate(round($time * 1000));
+            $id = Uuid::generate();
         }
         $data = self::removePrivateFields($data);
         $data[self::ATTRIBUTE_ID] = $id;
