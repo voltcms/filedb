@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "^7",
+        "php": "^8",
         "pragmaphp/uuid": "^1"
     },
     "require-dev": {
