@@ -36,7 +36,7 @@ class FileDB {
     /**
     * @param    array   Data
     */
-    public function create(array $data, $id = null): string {
+    public function create(?string $id = null, array $data): string {
         $time = microtime(true);
         $created = date(DATE_ATOM, round($time));
         if (empty($id)) {

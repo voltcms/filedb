@@ -2,7 +2,6 @@
 
 use \PHPUnit\Framework\TestCase;
 use \PragmaPHP\FileDB\FileDB;
-use \PragmaPHP\Uid\Uid;
 
 class FileDBTest extends TestCase {
 
@@ -38,7 +37,7 @@ class FileDBTest extends TestCase {
             'boolean_value' => false
         ];
 
-        $id = $db->create($test_data);
+        $id = $db->create(null, $test_data);
         $this->assertNotEmpty($id);
         $data = $db->read($id);
         $this->assertNotEmpty($data);
@@ -91,9 +90,9 @@ class FileDBTest extends TestCase {
             $this->assertEmpty($db->read($id));
         }
 
-        $db->create($test_data);
-        $db->create($test_data_update_1);
-        $db->create($test_data_update_2);
+        $db->create(null, $test_data);
+        $db->create(null, $test_data_update_1);
+        $db->create(null, $test_data_update_2);
         $data = $db->readAll();
         $this->assertNotEmpty($data);
 
@@ -107,7 +106,7 @@ class FileDBTest extends TestCase {
             $this->assertEmpty($data);
         }
 
-        $id = $db->create($test_data);
+        $id = $db->create(null, $test_data);
         $db->setReadonly($id, true);
         $db->update($id, $test_data_update_1);
         $data = $db->read($id);
@@ -125,7 +124,7 @@ class FileDBTest extends TestCase {
         $data = $db->read($id);
         $this->assertEmpty($data);
 
-        $id = $db->create($test_data, 'test_id');
+        $id = $db->create('test_id', $test_data);
         $this->assertNotEmpty($id);
         $this->assertNotEmpty('test_id');
         $data = $db->read($id);
