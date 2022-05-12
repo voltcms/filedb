@@ -23,7 +23,7 @@ class FileDB {
     public function __construct(string $directory) {
         // check if directory is existing
         if (!is_dir($directory)) {
-            if (!mkdir($directory, 0705, true)) {
+            if (!mkdir($directory, 0755, true)) {
                 throw new \Exception("Directory " . $directory . " cannot be created");
             }
         }
