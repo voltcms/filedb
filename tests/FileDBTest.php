@@ -3,11 +3,13 @@
 use \PHPUnit\Framework\TestCase;
 use \PragmaPHP\FileDB\FileDB;
 
-class FileDBTest extends TestCase {
+class FileDBTest extends TestCase
+{
 
-    public function test() {
+    public function test()
+    {
         $delete = true;
-    
+
         $db = new FileDB('testdata/users');
 
         if ($delete) {
@@ -17,24 +19,24 @@ class FileDBTest extends TestCase {
 
         $test_data = [
             'username' => 'Administrator',
-            'password' => 'test'
+            'password' => 'test',
         ];
         $test_data_update_1 = [
-            'username' => 'Tester '
+            'username' => 'Tester ',
         ];
         $test_data_update_2 = [
             'lastname' => 'Last Name',
             'password' => '',
             'groups' => [
                 'Administrator',
-                'Everyone'
+                'Everyone',
             ],
             'content' => '<div class="test">
             <h1>Test</h1>
             <p>Test</p>
             </div>
             ',
-            'boolean_value' => false
+            'boolean_value' => false,
         ];
 
         $id = $db->create(null, $test_data);
@@ -60,9 +62,8 @@ class FileDBTest extends TestCase {
         $this->assertEquals($data[0]['lastname'], 'Last Name');
         $this->assertEmpty($data[0]['password']);
 
- 
         $data = $db->read(null, [
-            'username' => '*est*'
+            'username' => '*est*',
         ]);
         $this->assertNotEmpty($data);
         if ($delete) {
@@ -71,7 +72,7 @@ class FileDBTest extends TestCase {
         }
 
         $data = $db->read(null, [
-            'username' => ' Tester '
+            'username' => ' Tester ',
         ]);
         $this->assertNotEmpty($data);
         if ($delete) {
@@ -80,7 +81,7 @@ class FileDBTest extends TestCase {
         }
 
         $data = $db->read(null, [
-            'username' => 'xxx'
+            'username' => 'xxx',
         ]);
         $this->assertEmpty($data);
 
@@ -133,5 +134,4 @@ class FileDBTest extends TestCase {
         $data = $db->read($id);
         $this->assertEmpty($data);
     }
-
 }
