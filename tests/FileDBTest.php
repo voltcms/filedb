@@ -1,7 +1,7 @@
 <?php
 
 use \PHPUnit\Framework\TestCase;
-use \PragmaPHP\FileDB\FileDB;
+use \VoltCMS\FileDB\FileDB;
 
 class FileDBTest extends TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace PragmaPHP\FileDB;
+namespace VoltCMS\FileDB;
 
-use \PragmaPHP\Uuid\Uuid;
+use \VoltCMS\Uuid\Uuid;
 
 /**
  * Flat file DB based on JSON files
