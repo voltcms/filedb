@@ -47,6 +47,7 @@ class FileDB
         $data = self::removePrivateFields($data);
         $data[self::ATTRIBUTE_ID] = $id;
         $data[self::ATTRIBUTE_CREATED] = $created;
+        $data[self::ATTRIBUTE_MODIFIED] = $created;
         $this->writeFile($id, $data);
         return $id;
     }
