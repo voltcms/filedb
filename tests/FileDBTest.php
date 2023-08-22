@@ -37,6 +37,7 @@ class FileDBTest extends TestCase
             </div>
             ',
             'boolean_value' => false,
+            '_private' => 'private'
         ];
 
         $id = $db->create(null, $test_data);
@@ -61,6 +62,7 @@ class FileDBTest extends TestCase
         $this->assertEquals($data[0]['username'], 'Tester');
         $this->assertEquals($data[0]['lastname'], 'Last Name');
         $this->assertEmpty($data[0]['password']);
+        $this->assertEmpty(array_key_exists('_private', $data[0]));
 
         $data = $db->read(null, [
             'username' => '*est*',

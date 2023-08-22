@@ -218,7 +218,7 @@ class FileDB
     private static function removePrivateFields(array $data): array
     {
         foreach ($data as $key => $value) {
-            if (strpos($key, '_') === 0) {
+            if (str_starts_with($key, '_')) {
                 unset($data[$key]);
             }
         }
