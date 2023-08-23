@@ -39,8 +39,7 @@ class FileDB
      */
     public function create(string $id = null, array $data): string
     {
-        $time = microtime(true);
-        $created = date(DATE_ATOM, round($time));
+        $created = round(microtime(true));
         if (empty($id)) {
             $id = Uuid::generate();
         }
@@ -112,7 +111,7 @@ class FileDB
             if (!self::isReadonly($file_data)) {
                 $data = self::removePrivateFields($data);
                 $data = array_merge($file_data, $data);
-                $data[self::ATTRIBUTE_MODIFIED] = date(DATE_ATOM, round(microtime(true)));
+                $data[self::ATTRIBUTE_MODIFIED] = round(microtime(true));
                 $this->writeFile($id, $data);
             }
         }
@@ -147,7 +146,7 @@ class FileDB
         if (is_file($file)) {
             $data = $this->readFile($file);
             $data[self::ATTRIBUTE_READONLY] = $readonly;
-            $data[self::ATTRIBUTE_MODIFIED] = date(DATE_ATOM, round(microtime(true)));
+            $data[self::ATTRIBUTE_MODIFIED] = round(microtime(true));
             $this->writeFile($id, $data);
         }
         return $id;
