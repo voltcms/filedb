@@ -40,7 +40,7 @@ class FileDBTest extends TestCase
             '_private' => 'private'
         ];
 
-        $id = $db->create(null, $test_data);
+        $id = $db->create($test_data);
         $this->assertNotEmpty($id);
         $data = $db->read($id);
         $this->assertNotEmpty($data);
@@ -65,7 +65,19 @@ class FileDBTest extends TestCase
         $this->assertEmpty(array_key_exists('_private', $data[0]));
 
         $data = $db->read(null, [
-            'username' => '*est*',
+            ' username ' => ' *est* ',
+        ]);
+        $this->assertNotEmpty($data);
+        $data = $db->read(null, [
+            'username' => 'test*',
+        ]);
+        $this->assertNotEmpty($data);
+        $data = $db->read(null, [
+            'username' => '*ster',
+        ]);
+        $this->assertNotEmpty($data);
+        $data = $db->read(null, [
+            'username' => '*ster',
         ]);
         $this->assertNotEmpty($data);
         if ($delete) {
@@ -74,7 +86,7 @@ class FileDBTest extends TestCase
         }
 
         $data = $db->read(null, [
-            'username' => ' Tester ',
+            ' username ' => ' Tester ',
         ]);
         $this->assertNotEmpty($data);
         if ($delete) {
@@ -86,6 +98,14 @@ class FileDBTest extends TestCase
             'username' => 'xxx',
         ]);
         $this->assertEmpty($data);
+        $data = $db->read(null, [
+            'username' => '',
+        ]);
+        $this->assertEmpty($data);
+        $data = $db->read(null, [
+            '' => 'xxx',
+        ]);
+        $this->assertEmpty($data);
 
         $this->assertNotEmpty($db->readAll());
         if ($delete) {
@@ -93,9 +113,9 @@ class FileDBTest extends TestCase
             $this->assertEmpty($db->read($id));
         }
 
-        $db->create(null, $test_data);
-        $db->create(null, $test_data_update_1);
-        $db->create(null, $test_data_update_2);
+        $db->create($test_data);
+        $db->create($test_data_update_1);
+        $db->create($test_data_update_2);
         $data = $db->readAll();
         $this->assertNotEmpty($data);
 
@@ -109,7 +129,7 @@ class FileDBTest extends TestCase
             $this->assertEmpty($data);
         }
 
-        $id = $db->create(null, $test_data);
+        $id = $db->create($test_data);
         $db->setReadonly($id, true);
         $db->update($id, $test_data_update_1);
         $data = $db->read($id);
@@ -127,12 +147,11 @@ class FileDBTest extends TestCase
         $data = $db->read($id);
         $this->assertEmpty($data);
 
-        $id = $db->create('test_id', $test_data);
+        $id = $db->create($test_data);
         $this->assertNotEmpty($id);
-        $this->assertNotEmpty('test_id');
         $data = $db->read($id);
         $this->assertNotEmpty($data);
-        $db->delete('test_id');
+        $db->delete($id);
         $data = $db->read($id);
         $this->assertEmpty($data);
     }

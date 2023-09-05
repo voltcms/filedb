@@ -37,12 +37,10 @@ class FileDB
     /**
      * @param    array   Data
      */
-    public function create(string $id = null, array $data): string
+    public function create(array $data): string
     {
         $created = round(microtime(true));
-        if (empty($id)) {
-            $id = Uuid::generate();
-        }
+        $id = Uuid::generate();
         $data = self::removePrivateFields($data);
         $data[self::ATTRIBUTE_ID] = $id;
         $data[self::ATTRIBUTE_CREATED] = $created;
@@ -62,25 +60,34 @@ class FileDB
             $files = [$this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON];
             return $this->readFiles($files);
         } else if (!empty($search_data)) {
-            // TODO performance, multi search array, wildcard search
+            // TODO performance, multi search array
+            $temp_search_data = [];
+            foreach ($search_data as $key => $value) {
+                $key = trim($key);
+                $value = trim($value);
+                if (empty($key) || empty($value)) {
+                    continue;
+                }
+                $temp_search_data[trim($key)] = trim($value);
+            }
+            $search_data = $temp_search_data;
             $files = $this->readAll();
             foreach ($files as $file) {
                 foreach ($search_data as $search_key => $search_value) {
-                    $search_value = trim($search_value);
-                    $search_key = trim($search_key);
                     if (array_key_exists($search_key, $file)) {
-                        foreach ($file as $key => $value) {
-                            if ($key == $search_key) {
-                                if (self::startsWith($search_value, '*') && self::endsWith($search_value, '*') && strlen($search_value) > 3) {
-                                    if (stripos($value, substr($search_value, 1, -1)) !== false) {
-                                        $result[] = $file;
-                                    }
-                                } else {
-                                    if (strcasecmp($value, $search_value) === 0) {
-                                        $result[] = $file;
-                                    }
-                                }
-                            }
+                        $value = $file[$search_key];
+                        if (str_starts_with($search_value, '*') && str_ends_with($search_value, '*') && strlen($search_value) > 2 && stripos($value, substr($search_value, 1, -1)) !== false) {
+                            $result[] = $file;
+                            continue;
+                        } else if (str_starts_with($search_value, '*') && strlen($search_value) > 1 && stripos($value, substr($search_value, 1)) !== false) {
+                            $result[] = $file;
+                            continue;
+                        } else if (str_ends_with($search_value, '*') && strlen($search_value) > 1 && stripos($value, substr($search_value, 0, -1)) !== false) {
+                            $result[] = $file;
+                            continue;
+                        } else if (strlen($search_value) > 0 && strcasecmp($value, $search_value) === 0) {
+                            $result[] = $file;
+                            continue;
                         }
                     }
                 }
@@ -157,7 +164,9 @@ class FileDB
         $file = $this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON;
         ksort($data);
         // todo trim array
-        array_walk_recursive($data, function (&$v) {$v = trim($v);});
+        array_walk_recursive($data, function (&$v) {
+            $v = trim($v);
+        });
         // $data = self::array_walk_recursive_delete($data, function ($value, $key) {
         //     if (is_array($value)) {
         //         return empty($value);
@@ -194,16 +203,6 @@ class FileDB
                 }
             }
         }
-    }
-
-    private static function startsWith($haystack, $needle): bool
-    {
-        return substr_compare($haystack, $needle, 0, strlen($needle)) === 0;
-    }
-
-    private static function endsWith($haystack, $needle): bool
-    {
-        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
     private static function isReadonly($data): bool
