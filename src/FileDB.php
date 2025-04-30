@@ -53,7 +53,7 @@ class FileDB
      * @param    string  Unique ID
      * @param    array   Data
      */
-    public function read(string $id = null, array $search_data = null): array
+    public function read(?string $id = null, ?array $search_data = null): array
     {
         $result = [];
         if (!empty($id)) {
