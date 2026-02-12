@@ -2,8 +2,6 @@
 
 namespace VoltCMS\FileDB;
 
-use \VoltCMS\Uuid\Uuid;
-
 /**
  * Flat file DB based on JSON files
  */
@@ -19,7 +17,7 @@ class FileDB
     private $directory;
 
     /**
-     * @param    string  Directory
+     * @param string $directory Directory
      */
     public function __construct(string $directory)
     {
@@ -28,19 +26,19 @@ class FileDB
             if (!mkdir($directory, 0755, true)) {
                 throw new \Exception("Directory " . $directory . " cannot be created");
             }
-        } else if (!is_writable($directory)) {
+        } elseif (!is_writable($directory)) {
             throw new \Exception("Directory " . $directory . " is not writeable");
         }
         $this->directory = $directory;
     }
 
     /**
-     * @param    array   Data
+     * @param array $data Data
      */
     public function create(array $data): string
     {
         $created = round(microtime(true));
-        $id = Uuid::generate();
+        $id = UUID::generate();
         $data = self::removePrivateFields($data);
         $data[self::ATTRIBUTE_ID] = $id;
         $data[self::ATTRIBUTE_CREATED] = $created;
@@ -50,8 +48,8 @@ class FileDB
     }
 
     /**
-     * @param    string  Unique ID
-     * @param    array   Data
+     * @param ?string $id Unique ID
+     * @param ?array $search_data Data
      */
     public function read(?string $id = null, ?array $search_data = null): array
     {
@@ -59,37 +57,35 @@ class FileDB
         if (!empty($id)) {
             $files = [$this->directory . DIRECTORY_SEPARATOR . $id . self::FILE_EXT_JSON];
             return $this->readFiles($files);
-        } else if (!empty($search_data)) {
+        } elseif (!empty($search_data)) {
             // TODO performance, multi search array
             $temp_search_data = [];
             foreach ($search_data as $key => $value) {
+                if (!is_string($key) || !is_string($value)) {
+                    continue;
+                }
                 $key = trim($key);
                 $value = trim($value);
                 if (empty($key) || empty($value)) {
                     continue;
                 }
-                $temp_search_data[trim($key)] = trim($value);
+                $temp_search_data[$key] = $value;
             }
             $search_data = $temp_search_data;
+            if (empty($search_data)) {
+                return [];
+            }
             $files = $this->readAll();
             foreach ($files as $file) {
+                $matched = true;
                 foreach ($search_data as $search_key => $search_value) {
-                    if (array_key_exists($search_key, $file)) {
-                        $value = $file[$search_key];
-                        if (str_starts_with($search_value, '*') && str_ends_with($search_value, '*') && strlen($search_value) > 2 && stripos($value, substr($search_value, 1, -1)) !== false) {
-                            $result[] = $file;
-                            continue;
-                        } else if (str_starts_with($search_value, '*') && strlen($search_value) > 1 && stripos($value, substr($search_value, 1)) !== false) {
-                            $result[] = $file;
-                            continue;
-                        } else if (str_ends_with($search_value, '*') && strlen($search_value) > 1 && stripos($value, substr($search_value, 0, -1)) !== false) {
-                            $result[] = $file;
-                            continue;
-                        } else if (strlen($search_value) > 0 && strcasecmp($value, $search_value) === 0) {
-                            $result[] = $file;
-                            continue;
-                        }
+                    if (!array_key_exists($search_key, $file) || !self::matchesSearchValue($file[$search_key], $search_value)) {
+                        $matched = false;
+                        break;
                     }
+                }
+                if ($matched) {
+                    $result[] = $file;
                 }
             }
         }
@@ -97,18 +93,20 @@ class FileDB
     }
 
     /**
-     * @param    string  Unique ID
-     * @param    array   Data
+     * Read all records.
      */
     public function readAll(): array
     {
         $files = glob($this->directory . DIRECTORY_SEPARATOR . '*' . self::FILE_EXT_JSON);
+        if ($files === false) {
+            return [];
+        }
         return $this->readFiles($files);
     }
 
     /**
-     * @param    string  Unique ID
-     * @param    array   Data
+     * @param string $id Unique ID
+     * @param array $data Data
      */
     public function update(string $id, array $data): string
     {
@@ -126,7 +124,7 @@ class FileDB
     }
 
     /**
-     * @param    string  Unique ID
+     * @param string $id Unique ID
      */
     public function delete(string $id): void
     {
@@ -135,17 +133,20 @@ class FileDB
     }
 
     /**
-     * @param    string  Unique ID
+     * Delete all records.
      */
     public function deleteAll(): void
     {
         $files = glob($this->directory . DIRECTORY_SEPARATOR . '*' . self::FILE_EXT_JSON);
+        if ($files === false) {
+            return;
+        }
         $this->deleteFiles($files);
     }
 
     /**
-     * @param    string  Unique ID
-     * @param    array   Data
+     * @param string $id Unique ID
+     * @param bool $readonly Readonly state
      */
     public function setReadonly(string $id, bool $readonly): string
     {
@@ -165,7 +166,9 @@ class FileDB
         ksort($data);
         // todo trim array
         array_walk_recursive($data, function (&$v) {
-            $v = trim($v);
+            if (is_string($v)) {
+                $v = trim($v);
+            }
         });
         // $data = self::array_walk_recursive_delete($data, function ($value, $key) {
         //     if (is_array($value)) {
@@ -174,7 +177,13 @@ class FileDB
         //     // return ($value === null);
         //     return empty($value);
         // });
-        file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
+        $json = json_encode($data, JSON_PRETTY_PRINT);
+        if ($json === false) {
+            throw new \RuntimeException('Unable to encode JSON for file: ' . $file);
+        }
+        if (file_put_contents($file, $json, LOCK_EX) === false) {
+            throw new \RuntimeException('Unable to write file: ' . $file);
+        }
     }
 
     private function readFiles(array $files): array
@@ -190,7 +199,20 @@ class FileDB
 
     private function readFile($file): array
     {
-        return json_decode(file_get_contents($file), true);
+        $json = file_get_contents($file);
+        if ($json === false) {
+            throw new \RuntimeException('Unable to read file: ' . $file);
+        }
+
+        $data = json_decode($json, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException('Invalid JSON in file: ' . $file . ' - ' . json_last_error_msg());
+        }
+        if (!is_array($data)) {
+            throw new \RuntimeException('JSON root must be an object or array in file: ' . $file);
+        }
+
+        return $data;
     }
 
     private function deleteFiles(array $files)
@@ -221,6 +243,27 @@ class FileDB
             }
         }
         return $data;
+    }
+
+    private static function matchesSearchValue($value, string $search_value): bool
+    {
+        if (!is_scalar($value)) {
+            return false;
+        }
+
+        $value = (string)$value;
+
+        if (str_starts_with($search_value, '*') && str_ends_with($search_value, '*') && strlen($search_value) > 2) {
+            return stripos($value, substr($search_value, 1, -1)) !== false;
+        }
+        if (str_starts_with($search_value, '*') && strlen($search_value) > 1) {
+            return stripos($value, substr($search_value, 1)) !== false;
+        }
+        if (str_ends_with($search_value, '*') && strlen($search_value) > 1) {
+            return stripos($value, substr($search_value, 0, -1)) !== false;
+        }
+
+        return strlen($search_value) > 0 && strcasecmp($value, $search_value) === 0;
     }
 
     // private static function array_walk_recursive_delete(array &$array, callable $callback, $userdata = null)

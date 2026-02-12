@@ -10,8 +10,7 @@
         }
     ],
     "require": {
-        "php": "^8",
-        "voltcms/uuid": "^1"
+        "php": "^8"    
     },
     "require-dev": {
         "phpunit/phpunit": "^10"
